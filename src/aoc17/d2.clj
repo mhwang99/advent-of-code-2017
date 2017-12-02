@@ -11,22 +11,14 @@
 (defn q2 [ll]
   (apply
     +
-    (mapv (fn [l]
-            (reduce
-              (fn [o i]
-                (reduce
-                  (fn [n j]
-                    (let [ni (nth l i)
-                          nj (nth l j)]
-                      (cond
-                        (= n -2) n
-                        (and (not= i j)
-                             (= 0 (mod nj ni))) (if (> n -1) -2
-                                                  (/ nj ni))
-                        :else n)))
-                  o (range (count l))))
-              -1 (range (count l))))
-          ll)))
+    (flatten
+      (map (fn [l]
+             (for [i l
+                   j l
+                   :when (and (not= i j)
+                              (= 0 (mod j i)))]
+               (/ j i)))
+           ll))))
 
 (def in
   (mapv (fn [l]
