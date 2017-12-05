@@ -8,8 +8,7 @@
            n 0]
       (if (>= i cnt)
         n
-        (let [in (nth l i)
-              ff (if (>= in 3) dec inc)]
+        (let [in (nth l i)]
           (recur (update l i (fi in))
                  (+ i in)
                  (inc n)))))))
