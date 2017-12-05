@@ -17,35 +17,29 @@
         (recur (inc i))))))
 
 (defn q2 [x]
-  (loop [r 100
-         c (inc r)
-         m (-> (mapv
-                 (fn [_] (mapv (fn [_] 0) (range (* 2 r))))
-                 (range (* 2 r)))
-               (assoc-in [r r] 1))
+  (loop [r 0
+         c 1
+         m {[0 0] 1}
          d :r]
-    (let [v (+ (get-in m [(dec r) (dec c)])
-               (get-in m [r (dec c)])
-               (get-in m [(inc r) (dec c)])
-               (get-in m [(dec r) c])
-               (get-in m [(inc r) c])
-               (get-in m [(dec r) (inc c)])
-               (get-in m [r (inc c)])
-               (get-in m [(inc r) (inc c)]))]
+    (let [v (apply +
+                   (for [x (range (dec c) (+ c 2))
+                         y (range (dec r) (+ r 2))
+                         :when (not= [r c] [y x])]
+                     (get m [y x] 0)))]
       (if (>= v x)
         v
-        (let [m (assoc-in m [r c] v)
+        (let [m (assoc m [r c] v)
               [r c d] (case d
-                        :r (if (= 0 (get-in m [(dec r) c]))
+                        :r (if (nil? (get m [(dec r) c]))
                              [(dec r) c :u]
                              [r (inc c) d])
-                        :u (if (= 0 (get-in m [r (dec c)]))
+                        :u (if (nil? (get m [r (dec c)]))
                              [r (dec c) :l]
                              [(dec r) c d])
-                        :l (if (= 0 (get-in m [(inc r) c]))
+                        :l (if (nil? (get m [(inc r) c]))
                              [(inc r) c :d]
                              [r (dec c) d])
-                        :d (if (= 0 (get-in m [r (inc c)]))
+                        :d (if (nil? (get m [r (inc c)]))
                              [r (inc c) :r]
                              [(inc r) c d]))]
           (recur r c m d))))))
