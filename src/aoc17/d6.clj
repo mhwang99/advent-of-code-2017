@@ -2,19 +2,17 @@
   (:require [clojure.string :as s]))
 
 (defn q0 [l q2?]
-  (let [cnt (count l)
-        redist (fn [l]
-                 (let [mx (apply max l)
-                       i (.indexOf l mx)
-                       l (->> (assoc l i 0)
-                              (mapv (partial + (int (/ mx cnt)))))]
-                   (reduce #(update %1 (mod (+ i 1 %2) cnt) inc)
-                           l (range (mod mx cnt)))))]
-    (reduce (fn [[l h] n]
-              (if-let [i (get h l)]
-                (reduced (if q2? (- n i) n))
-                [(redist l) (assoc h l n)]))
-            [l {}] (range))))
+  (let [cnt (count l)]
+    (reduce
+      (fn [[l h] n]
+        (if-let [i (get h l)]
+          (reduced (if q2? (- n i) n))
+          (let [mx (apply max l)
+                i (.indexOf l mx)]
+            [(reduce #(update %1 (mod (+ i 1 %2) cnt) inc)
+                     (assoc l i 0) (range mx))
+             (assoc h l n)])))
+      [l {}] (range))))
 
 (defn q1 [l]
   (q0 l false))
