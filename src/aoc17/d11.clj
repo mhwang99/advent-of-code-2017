@@ -5,11 +5,6 @@
   (loop [n 0
          x (max x (- x))
          y (max y (- y))]
-    #_(cond
-      (= x y 0) n
-      (= y 0) (recur (+ n 2) (- x 6) y)
-      (> x 0) (recur (inc n) (- x 3) (- y 2))
-      :else (recur (inc n) x (- y 4)))
     (cond
       (= x y 0) n
       (= y 0) (+ n (/ x 3))
