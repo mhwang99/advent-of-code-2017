@@ -5,11 +5,18 @@
   (loop [n 0
          x (max x (- x))
          y (max y (- y))]
-    (cond
+    #_(cond
       (= x y 0) n
       (= y 0) (recur (+ n 2) (- x 6) y)
       (> x 0) (recur (inc n) (- x 3) (- y 2))
-      :else (recur (inc n) x (- y 4)))))
+      :else (recur (inc n) x (- y 4)))
+    (cond
+      (= x y 0) n
+      (= y 0) (+ n (/ x 3))
+      (> x 0) (if (> (/ y 2) (/ x 3))
+                (recur (+ n (/ x 3)) 0 (- y (* 2 (/ x 3))))
+                (recur (+ n (/ y 2)) (- x (* 3 (/ y 2))) 0))
+      :else (+ n (/ y 4)))))
 
 (defn q0 [l]
   (reduce (fn [[x y mx] e]
