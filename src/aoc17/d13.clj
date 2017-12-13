@@ -20,11 +20,10 @@
         (range)))
 
 (def in
-  (into {}
-        (mapv (fn [l]
-                (mapv #(Integer. %) (re-seq #"\d+" l)))
-              (-> (slurp "resources/d13.txt")
-                  (s/split #"\n")))))
+  (mapv (fn [l]
+          (mapv #(Integer. %) (re-seq #"\d+" l)))
+        (-> (slurp "resources/d13.txt")
+            (s/split #"\n"))))
 
 (defn run []
   (println "q1" (q1 in))
