@@ -19,11 +19,12 @@
                                                     [(inc x) y]
                                                     [x (dec y)]
                                                     [x (inc y)]])
-                                         [true (conj! sl (conj s [x y]))]
-                                         [b (conj! sl s)]))
-                                     [false (transient [])] sl)]
-                  (persistent! (if b sl
-                                 (conj! sl #{[x y]})))))
+                                         [true (conj sl (conj s [x y]))]
+                                         [b (conj sl s)]))
+                                     [false []] sl)]
+                  (if b
+                    sl
+                    (conj sl #{[x y]}))))
               [] (q0 ll)))))
 
 (defn kh [s]
