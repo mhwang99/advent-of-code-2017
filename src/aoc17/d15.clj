@@ -10,7 +10,7 @@
       ret
       (let [[a b] (mapv (fn [a u m]
                           (reduce (fn [r v]
-                                    (let [r (mod (* r v) 2147483647)]
+                                    (let [r (rem (* r v) 2147483647)]
                                       (if (= 0 (bit-and r (dec m)))
                                         (reduced r)
                                         r)))
