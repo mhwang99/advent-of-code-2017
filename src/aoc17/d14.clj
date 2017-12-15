@@ -11,21 +11,20 @@
   (count (q0 ll)))
 
 (defn q2 [ll]
-  (count
-    (aoc17.d12/q0
-      (reduce (fn [sl [x y]]
-                (let [[b sl] (reduce (fn [[b sl] s]
-                                       (if (some s [[(dec x) y]
-                                                    [(inc x) y]
-                                                    [x (dec y)]
-                                                    [x (inc y)]])
-                                         [true (conj sl (conj s [x y]))]
-                                         [b (conj sl s)]))
-                                     [false []] sl)]
-                  (if b
-                    sl
-                    (conj sl #{[x y]}))))
-              [] (q0 ll)))))
+  (aoc17.d12/q2
+    (reduce (fn [sl [x y]]
+              (let [[b sl] (reduce (fn [[b sl] s]
+                                     (if (some s [[(dec x) y]
+                                                  [(inc x) y]
+                                                  [x (dec y)]
+                                                  [x (inc y)]])
+                                       [true (conj sl (conj s [x y]))]
+                                       [b (conj sl s)]))
+                                   [false []] sl)]
+                (if b
+                  sl
+                  (conj sl #{[x y]}))))
+            [] (q0 ll))))
 
 (defn kh [s]
   (->> (concat (map int s) [17 31 73 47 23])
