@@ -12,10 +12,9 @@
 (defn q2 [x]
   (first
     (reduce (fn [[ret c] i]
-              (let [n (rem (+ x c 1) i)]
-                (case n
-                  1 [i n]
-                  0 [ret i]
+              (let [n (inc (rem (+ x c) i))]
+                (if (= n 1)
+                  [i n]
                   [ret n])))
             [1 1] (range 2 50000001))))
 
