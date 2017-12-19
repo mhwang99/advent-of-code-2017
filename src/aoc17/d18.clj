@@ -39,26 +39,27 @@
               (and (= s :blk) (empty? q))) (get-in pgm [true :n])
           (or (= s :end)
               (>= i (count l))) (recur (assoc pgm p (genp m i :end q n)) (not p))
-          :else (let [[t a b] (nth l i)]
+          :else (let [s :run
+                      [t a b] (nth l i)]
                   (if-let [m (case t
                                :set (assoc m a (getv m b))
                                :add (assoc m a (+ (get m a 0) (getv m b)))
                                :mul (assoc m a (* (get m a 0) (getv m b)))
                                :mod (assoc m a (rem (get m a 0) (getv m b)))
                                nil)]
-                    (recur (assoc pgm p (genp m (inc i) :run q n)) p)
+                    (recur (assoc pgm p (genp m (inc i) s q n)) p)
                     (case t
                       :jgz (if (> (getv m a) 0)
-                             (recur (assoc pgm p (genp m (+ i (getv m b)) :run q n)) p)
-                             (recur (assoc pgm p (genp m (inc i)          :run q n)) p))
+                             (recur (assoc pgm p (genp m (+ i (getv m b)) s q n)) p)
+                             (recur (assoc pgm p (genp m (inc i)          s q n)) p))
                       :rcv (if (seq q)
                              (let [m (assoc m a (first q))
                                    q (vec (drop 1 q))]
-                               (recur (assoc pgm p (genp m (inc i) :run q n)) p))
+                               (recur (assoc pgm p (genp m (inc i) s q n)) p))
                              (recur (assoc pgm p (genp m i :blk q n)) (not p)))
                       :snd (let [v (getv m a)
                                  pgm (update-in pgm [(not p) :q] conj v)]
-                             (recur (assoc pgm p (genp m (inc i) :run q (inc n))) p))))))))))
+                             (recur (assoc pgm p (genp m (inc i) s q (inc n))) p))))))))))
 
 (def in
   (mapv (fn [s]
