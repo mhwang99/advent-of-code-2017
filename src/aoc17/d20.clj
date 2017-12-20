@@ -5,21 +5,18 @@
 (defn q0
   [[pm vm am] cnt fn-col]
   (let [addm (fn [ma mb]
-               (reduce (fn [m [k v]]
-                         (assoc m k (mapv #(+ %1 %2)
-                                          v (get mb k))))
+               (reduce (fn [m [k l]]
+                         (->> (mapv + l (get mb k))
+                              (assoc m k)))
                        {} ma))]
-    (loop [pm pm
-           vm vm
-           n 0]
-      (if (> n cnt)
-        pm
-        (let [vm (addm vm am)
-              pm (addm pm vm)
-              cl (fn-col pm)]
-          (if (seq cl)
-            (recur (apply dissoc pm cl) (apply dissoc vm cl) (inc n))
-            (recur pm vm (inc n))))))))
+    (first
+      (reduce (fn [[pm vm] _]
+               (let [vm (addm vm am)
+                     pm (addm pm vm)
+                     cl (fn-col pm)]
+                 (cond->> [pm vm]
+                   (seq cl) (mapv #(apply dissoc % cl)))))
+              [pm vm] (range cnt)))))
 
 (defn q1
   [ml cnt]
@@ -31,29 +28,28 @@
 
 (defn q2
   [ml cnt]
-  (let [fn-collide (fn [pm]
-                     (->> (reduce (fn [m [k v]]
-                                    (assoc m v (conj (get m v []) k)))
-                                  {} pm)
-                          vals
-                          (filter #(> (count %) 1))
-                          flatten))]
-    (count (q0 ml cnt fn-collide))))
+  (count
+    (q0 ml cnt (fn [pm]
+                 (->> (reduce (fn [m [k v]]
+                                (assoc m v (conj (get m v []) k)))
+                              {} pm)
+                     vals
+                     (filter #(> (count %) 1))
+                     flatten)))))
 
 (def in
   (let [raw (-> (slurp "resources/d20.txt")
                 (s/split #"\n"))
         ll (mapv (fn [l n]
-                   [n (partition 3
-                                 (mapv #(Integer. %)
-                                       (re-seq #"-?\d+" l)))])
+                   [n (->> (re-seq #"-?\d+" l)
+                           (mapv #(Integer. %))
+                           (partition 3))])
                  raw (range))]
     (reduce (fn [[pm vm am] [n [p v a]]]
               [(assoc pm n (vec p))
                (assoc vm n (vec v))
                (assoc am n (vec a))])
             [{} {} {}] ll)))
-
 
 (defn run []
   (println "q1" (q1 in 1000))
