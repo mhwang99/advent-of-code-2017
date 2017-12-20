@@ -40,16 +40,14 @@
 (def in
   (let [raw (-> (slurp "resources/d20.txt")
                 (s/split #"\n"))
-        ll (mapv (fn [l n]
-                   [n (->> (re-seq #"-?\d+" l)
-                           (mapv #(Integer. %))
-                           (partition 3))])
-                 raw (range))]
-    (reduce (fn [[pm vm am] [n [p v a]]]
-              [(assoc pm n (vec p))
-               (assoc vm n (vec v))
-               (assoc am n (vec a))])
-            [{} {} {}] ll)))
+        nvl (mapv (fn [l n]
+                    [n (->> (re-seq #"-?\d+" l)
+                            (mapv #(Integer. %))
+                            (partition 3))])
+                  raw (range))]
+    (reduce (fn [ml [n vl]] ;(fn [[pm vm am] [n [p v a]]]
+              (mapv #(assoc %1 n (vec %2)) ml vl))
+            [{} {} {}] nvl)))
 
 (defn run []
   (println "q1" (q1 in 1000))
