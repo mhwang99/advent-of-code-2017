@@ -1,73 +1,53 @@
 (ns aoc17.d21
   (:require [clojure.string :as s]))
 
-(defn all-ptn [p]
-  (let [n (count p)
-        rot (fn [p _]
-              (reduce (fn [o i]
-                        (conj o (->> (flatten p)
-                                     (drop i)
-                                     (take-nth n)
-                                     reverse
-                                     vec)))
-                      [] (range n)))
-        rev (mapv (comp vec reverse) p)]
-    (set (mapcat (fn [p]
-                   (reductions rot p (range 3)))
-                 [p rev]))))
-
 (def in
-  (mapv (fn [l]
-          (mapv #(%2 %1)
-                (mapv #(mapv vec (s/split % #"/"))
-                      (s/split l #" => "))
-                [all-ptn identity]))
-        (-> (slurp "resources/d21.txt")
-            (s/split #"\n"))))
+  (reduce (fn [m l]
+            (let [[a b] (map #(map seq (s/split % #"/"))
+                             (s/split l #" => "))
+                  rot (fn [a _]
+                        (apply map (comp reverse str) a))
+                  allp (->> (mapcat (fn [p]
+                                      (reductions rot p (range 3)))
+                                    [a (map reverse a)])
+                            (map #(apply str (flatten %))))
+                  b (apply str (flatten b))]
+              (into m (zipmap allp (repeat b)))))
+          {} (-> (slurp "resources/d21.txt")
+                 (s/split #"\n"))))
 
 (defn split-board [b n]
-  (let [r (/ (count b) n)
-        sb (partition n (flatten b))]
-    (reduce (fn [o i]
-              (concat o (->> (drop i sb)
-                             (take-nth r)
-                             (partition n))))
-            [] (range r))))
+  (let [cnt (int (Math/sqrt (count b)))
+        r (/ cnt n)]
+    (->> (partition r (partition n b))
+         (apply mapcat concat)
+         (partition (* n n))
+         (mapv (partial apply str)))))
 
 (defn merge-board [bs]
-  (let [n (count (first bs))
-        r (* (int (Math/sqrt (count bs))) n)
-        mb (partition n (flatten bs))]
-    (->> (reduce (fn [o i]
-                   (conj o (take-nth r (drop i mb))))
-                 [] (range r))
-         flatten
-         (partition r))))
+  (let [n (int (Math/sqrt (count (first bs))))
+        s (apply str bs)
+        r (int (Math/sqrt (count s)))]
+    (->> (partition r (partition n s))
+         (apply mapcat concat)
+         (apply str))))
 
-(defn q0 [rl n]
+(defn q0 [rm n]
   (reduce (fn [b _]
             (->> (if (= (rem (count b) 2) 0) 2
                    3)
-                 (split-board b)
-                 (map (fn [b]
-                        (some (fn [r]
-                                (when ((first r) b)
-                                  (second r))) rl)))
-                 merge-board))
-          (mapv vec [".#."
-                     "..#"
-                     "###"])
-          (range n)))
+                 (split-board2 b)
+                 (map #(get rm %))
+                 merge-board2))
+          ".#...####" (range n)))
 
-(defn q1 [rl]
-  (->> (q0 rl 5)
-       flatten
+(defn q1 [rm]
+  (->> (q02 rm 5)
        (filter #(= % \#))
        count))
 
-(defn q2 [rl]
-  (->> (q0 rl 18)
-       flatten
+(defn q2 [rm]
+  (->> (q02 rm 18)
        (filter #(= % \#))
        count))
 
