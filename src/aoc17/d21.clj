@@ -10,7 +10,7 @@
                   allp (->> (mapcat (fn [p]
                                       (reductions rot p (range 3)))
                                     [a (map reverse a)])
-                            (map #(apply str (flatten %))))
+                            (map #(flatten %)))
                   b (apply str (flatten b))]
               (into m (zipmap allp (repeat b)))))
           {} (-> (slurp "resources/d21.txt")
@@ -21,16 +21,14 @@
         r (/ cnt n)]
     (->> (partition r (partition n b))
          (apply mapcat concat)
-         (partition (* n n))
-         (mapv (partial apply str)))))
+         (partition (* n n)))))
 
 (defn merge-board [bs]
   (let [n (int (Math/sqrt (count (first bs))))
         s (apply str bs)
         r (int (Math/sqrt (count s)))]
     (->> (partition r (partition n s))
-         (apply mapcat concat)
-         (apply str))))
+         (apply mapcat concat))))
 
 (defn q0 [rm n]
   (reduce (fn [b _]
