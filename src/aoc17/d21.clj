@@ -36,9 +36,9 @@
   (reduce (fn [b _]
             (->> (if (= (rem (count b) 2) 0) 2
                    3)
-                 (split-board2 b)
+                 (split-board b)
                  (map #(get rm %))
-                 merge-board2))
+                 merge-board))
           ".#...####" (range n)))
 
 (defn q1 [rm]
