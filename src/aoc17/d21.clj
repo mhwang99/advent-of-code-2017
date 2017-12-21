@@ -42,12 +42,12 @@
           ".#...####" (range n)))
 
 (defn q1 [rm]
-  (->> (q02 rm 5)
+  (->> (q0 rm 5)
        (filter #(= % \#))
        count))
 
 (defn q2 [rm]
-  (->> (q02 rm 18)
+  (->> (q0 rm 18)
        (filter #(= % \#))
        count))
 
