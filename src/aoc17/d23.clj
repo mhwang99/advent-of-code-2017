@@ -39,14 +39,14 @@
 
 (defn q2 [l]
   (let [{:keys [b c d]} (second (q0 (conj (take 10 l) [:set :a 1])))
-        n (- (nth (nth l 30) 2))]
+        n (nth (nth l 30) 2)]
     (loop [b b
            e d
            h 0]
       (cond
         (> b c) h
-        (> (* e e) b) (recur (+ b n) d h)
-        (= 0 (mod b e)) (recur (+ b n) d (inc h))
+        (> (* e e) b) (recur (- b n) d h)
+        (= 0 (mod b e)) (recur (- b n) d (inc h))
         :else (recur b (inc e) h)))))
 
 (defn run []
