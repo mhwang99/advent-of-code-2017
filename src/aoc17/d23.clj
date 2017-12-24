@@ -38,8 +38,9 @@
   (:mul (first (q0 l))))
 
 (defn q2 [l]
-  (let [b (:b (second (q0 (conj (take 6 l) [:set :a 1]))))
-        c (- b (nth (nth l 7) 2))
+  (let [l8 (second (q0 (conj (take 8 l) [:set :a 1])))
+        b (:b l8)
+        c (:c l8)
         n (- (nth (nth l 30) 2))
         oe (nth (nth l 10) 2)]
     (loop [b b
