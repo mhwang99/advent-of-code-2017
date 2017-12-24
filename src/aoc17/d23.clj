@@ -38,18 +38,15 @@
   (:mul (first (q0 l))))
 
 (defn q2 [l]
-  (let [l8 (second (q0 (conj (take 8 l) [:set :a 1])))
-        b (:b l8)
-        c (:c l8)
-        n (- (nth (nth l 30) 2))
-        oe (nth (nth l 10) 2)]
+  (let [{:keys [b c d]} (second (q0 (conj (take 10 l) [:set :a 1])))
+        n (- (nth (nth l 30) 2))]
     (loop [b b
-           e oe
+           e d
            h 0]
       (cond
         (> b c) h
-        (> (* e e) b) (recur (+ b n) oe h)
-        (= 0 (mod b e)) (recur (+ b n) oe (inc h))
+        (> (* e e) b) (recur (+ b n) d h)
+        (= 0 (mod b e)) (recur (+ b n) d (inc h))
         :else (recur b (inc e) h)))))
 
 (defn run []
